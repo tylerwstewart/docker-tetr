@@ -1,4 +1,4 @@
-FROM tatsushid/tinycore:7.2-x86-64
+FROM tatsushid/tinycore:7.2-x86_64
 # Instructions are run with 'tc' user
 
 # <local TC mirror> = http://pecan.digium.internal:81/tinycore-testing/
