@@ -36,7 +36,7 @@ USER $TCUSER
 WORKDIR /home/$TCUSER
 
 RUN . .ashrc .profile && \
-    ( [ ! -z "$TCMIRROR" ] && echo "$TCMIRROR" > /opt/tcemirror ) && \
+    ( [ ! -z "$TCMIRROR" ] && echo "$TCMIRROR" > /opt/tcemirror||true) && \
     tce-load -wic \
         advcomp.tcz \
         autoconf.tcz \
