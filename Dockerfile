@@ -8,9 +8,11 @@ FROM tatsushid/tinycore:7.2-x86
 # http://bugs.python.org/issue19846
 # > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
 ENV TCUSER="tc" LANG=C.UTF-8 LC_ALL=C LANGUAGE=C.UTF-8 \
-    CFLAGS=-m32 CXXFLAGS=-m32 LDFLAGS="-m32 -Wl,-O1" \
-    CC="gcc -flto -fuse-linker-plugin -march=i486 -mtune=i686 -Os -pipe" \
-    CXX="g++ -flto -fuse-linker-plugin -march=i486 -mtune=i686 -Os -pipe" \
+    CFLAGS="-m32 -march=i486 -mtune=i686 -Os -pipe" \
+    CXXFLAGS="-m32 -march=i486 -mtune=i686 -Os -pipe" \
+    LDFLAGS="-m32 -Wl,-O1" \
+    CC="gcc -flto -fuse-linker-plugin" \
+    CXX="g++ -flto -fuse-linker-plugin" \
     TCDELIVER="tc-deliver"
 
 USER root
