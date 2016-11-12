@@ -1,0 +1,12 @@
+#!/bin/sh
+
+. ./docker.sh
+
+HDD="smartmontools lcdproc hdd-tests"
+TC_4="openssl"
+TC_7=""
+
+PACKAGES="$TC_7 $HDD"
+
+build_packages $PACKAGES
+remaster hdd-tools.cfg

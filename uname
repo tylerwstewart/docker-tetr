@@ -1,0 +1,30 @@
+#!/bin/sh
+if [ -z "$@" ] || [ "$@" != "-r" ] || [ "$@" != "-m" ]; then
+  /bin/uname $@
+  exit $?;
+fi
+
+TC4="3.0.21-tinycore"
+TC5="3.8.13-tinycore"
+TC6="3.16.6-tinycore"
+TC7="4.2.9-tinycore"
+
+TC_ARCH=$(file -b /bin/busybox|cut -d, -f1|egrep -o [0-9]{2})
+TC_VER=$(version|cut -d. -f1)
+KERNEL=$(eval echo \$TC${TC_VER})
+[ -z "$KERNEL" ] && exit 1
+[ "$TC_ARCH" = "64" ] && KERNEL="${KERNEL}64"
+
+if [ "$TC_ARCH" = "64" ]; then
+  TC_ARCH = "x86_64"
+else
+  TC_ARCH = "i486"
+  INTEL=$(file -b /bin/busybox|cut -d, -f2|egrep -o [0-9]{3}$)
+  [ ! -z "$INTEL" ] && TC_ARCH="i${INTEL}"
+fi
+
+if [ "$1" = "-r" ]; then
+  echo $KERNEL
+elif [ "$1" = "-m" ]; then
+  echo $TC_ARCH
+fi
