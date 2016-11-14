@@ -15,27 +15,24 @@ ENV TCUSER="tc" LANG=C.UTF-8 LC_ALL=C LANGUAGE=C.UTF-8 \
     CXX="g++ -flto -fuse-linker-plugin" \
     TCDELIVER="tc-deliver"
 
-USER root
-# Setup backup of tet-functions, and users home directory
+# Because docker is insane and sets its own owner:group instead of anything sane
+# like using the USER from Dockerfile, or copying the owner:group as-is,
+# we'll use sudo to fix permissions instead of wasting image layers
 COPY uname tc-imager-build.sh git-clones.sh /home/$TCUSER/.local/bin/
 COPY config /home/$TCUSER/.ssh/
-RUN echo "$TCUSER" > /etc/sysconfig/tcuser && \
-    sed -i -e 's/ -le 3 \]$/ -le 6 ]/;' /etc/init.d/tc-functions && \
-    . /etc/init.d/tc-functions && \
-    mkdir -p /home/$TCUSER/$TCDELIVER/packages /home/$TCUSER/$TCDELIVER/remaster && \
-    setupHome && \
-    chmod 0600 -R /home/$TCUSER/.ssh/* && \
-    chmod 0700 /home/$TCUSER/.ssh &&\
-    echo etc/init.d/tet-functions >> /opt/.filetool.lst
 
-USER $TCUSER
 # These commands require DNS to be setup correctly on the Docker host machine.
 # Your '/etc/resolv.conf' file needs to have entries for nameserver that are not localhost
 # addresses, and that can resolve external connections, your TCMIRROR at a minimum
 
 WORKDIR /home/$TCUSER
 
-RUN . .ashrc .profile && \
+RUN sudo chown -R $TCUSER:staff /home/$TCUSER && \
+    . .ashrc .profile && \
+    chmod 0600 -R /home/$TCUSER/.ssh/* && \
+    chmod 0700 /home/$TCUSER/.ssh &&\
+    echo etc/init.d/tet-functions >> /opt/.filetool.lst && \
+    mkdir -p /home/$TCUSER/$TCDELIVER/packages /home/$TCUSER/$TCDELIVER/remaster && \
     ( [ ! -z "$TCMIRROR" ] && echo "$TCMIRROR" > /opt/tcemirror||true) && \
     tce-load -wic \
         advcomp.tcz \
@@ -62,7 +59,5 @@ RUN . .ashrc .profile && \
     ~/.local/bin/git-clones.sh && \
     ~/.local/bin/update-tet-database && \
     ( tce-load -w python3.5 || true; )
-    #sudo chown -R $TCUSER:staff /home/$TCUSER && \
 
 ENTRYPOINT [".local/bin/tc-imager-build.sh"]
-#VOLUME /home/$TCUSER/src/tc-diskless-remaster /home/$TCUSER/src/tc-ext-tools /home/$TCUSER/src/tc-ext-tools-packages
