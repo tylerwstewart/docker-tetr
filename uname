@@ -1,5 +1,5 @@
 #!/bin/sh
-if [ -z "$@" ] || [ "$@" != "-r" ] || [ "$@" != "-m" ]; then
+if [ -z "$@" ] || [ "$@" != "-r" -a "$@" != "-m" ]; then
   /bin/uname $@
   exit $?;
 fi
@@ -16,9 +16,9 @@ KERNEL=$(eval echo \$TC${TC_VER})
 [ "$TC_ARCH" = "64" ] && KERNEL="${KERNEL}64"
 
 if [ "$TC_ARCH" = "64" ]; then
-  TC_ARCH = "x86_64"
+  TC_ARCH="x86_64"
 else
-  TC_ARCH = "i486"
+  TC_ARCH="i486"
   INTEL=$(file -b /bin/busybox|cut -d, -f2|egrep -o [0-9]{3}$)
   [ ! -z "$INTEL" ] && TC_ARCH="i${INTEL}"
 fi
