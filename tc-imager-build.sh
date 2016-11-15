@@ -20,6 +20,10 @@ exerr() {
   exit 1
 }
 
+verify_git() {
+  $TCBIN/git-clones.sh git
+}
+
 update_git() {
   # Make sure git repo's are up to date
   #~ (cd ${TCSOURCE}/;
@@ -38,8 +42,8 @@ update_packages() {
     local git_pkgs="$d/packages"
     [ -d $git_pkgs ] || continue
     # symlink the packages into the tc-ext-tools directory
-    ln -s $git_pkgs/* $TET_PKGS/||exerr "failed to link packages";
-    ln -s $(find $d -maxdepth 1 -type f -executable) $TET/
+    ln -s $git_pkgs/* $TETPKG/ 2>/dev/null;
+    ln -s $(find $d -maxdepth 1 -type f -executable) $TET/ 2>/dev/null
   done
 }
 
@@ -49,7 +53,7 @@ tet() {
   ${TCBIN}/update-tet-database || exerr "No TET database"
   ${TCBIN}/buildit $1 || exerr "Couldn't build TET package"
   PACKAGES_DIR="$PACKAGES/$PACKAGE_SUBDIR"
-  SUBMITS_DIR="SUBMITS/$PACKAGE_SUBDIR"
+  SUBMITS_DIR="$SUBMITS/$PACKAGE_SUBDIR"
   [ -d "${PACKAGES_DIR}" ] || \
     sudo mkdir -p "${PACKAGES_DIR}" || \
     exerr "Couldn't make packages directory"
@@ -60,8 +64,8 @@ tet() {
   sudo chmod -R u+rwX,g+rwX,o+rwX ${DELIVER}
 
   # Copy packages to src volume
-  cp -ap ${TETSTORE}'/*/pkg/*/*.tcz*' ${PACKAGES_DIR}/|| exerr "Couldn't copy package deliverables"
-  cp -ap ${TETSTORE}'/*/pkg/*.bfe' ${SUBMITS_DIR}/
+  sudo cp -fLap ${TETSTORE}/*/pkg/*/*.tcz* ${PACKAGES_DIR}/|| exerr "Couldn't copy package deliverables"
+  sudo cp -fLap ${TETSTORE}/*/pkg/*.bfe ${SUBMITS_DIR}/
 }
 
 tetiff() {
@@ -109,9 +113,14 @@ TC_ARCH=$(file -b /bin/busybox|cut -d, -f1|egrep -o [0-9]{2})
 [ "$TC_ARCH" = "64" ] && TC_ARCH="x86_64"
 PACKAGE_SUBDIR="${TC_VER}.x/$TC_ARCH/tcz"
 
+verify_git;
+
 . ${TCHOME}/.profile
 [ ! -z "$TCMIRROR" ] && echo "$TCMIRROR" > /opt/tcemirror
-update_git;
+if [ "$1" = "git" ]; then
+  update_git;
+  shift;
+fi
 update_packages;
 if [ "$1" = "tet" ]; then
   shift;

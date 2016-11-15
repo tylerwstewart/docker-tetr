@@ -21,6 +21,7 @@ exerr() {
 git_clones() {
   local f;
   [ -z "$GIT_REPOS" ] && exerr "no git repos to clone"
+  sudo chmod u+rwX,g+rwX,o+rwX $TCSOURCE
   for f in $GIT_REPOS; do
     [ -d "$TCSOURCE/$f" ] && continue
     local git_repo="$GIT_URL/${f}.git";
@@ -86,6 +87,8 @@ install_remaster() {
 }
 
 git_clones;
-install_tet;
-add_packages;
-install_remaster;
+if [ "$1" != "git" ]; then
+  install_tet;
+  add_packages;
+  install_remaster;
+fi
