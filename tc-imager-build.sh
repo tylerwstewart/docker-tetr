@@ -63,6 +63,7 @@ tet() {
   sudo chown -R $TCUSER:staff ${DELIVER}
   sudo chmod -R u+rwX,g+rwX,o+rwX ${DELIVER}
 
+  printf "\nCopying generated deliverables to destinations...\n"
   # Copy packages to src volume
   sudo cp -fLap ${TETSTORE}/*/pkg/*/*.tcz* ${PACKAGES_DIR}/|| exerr "Couldn't copy package deliverables"
   sudo cp -fLap ${TETSTORE}/*/pkg/*.bfe ${SUBMITS_DIR}/||true
@@ -94,8 +95,10 @@ tc_remaster() {
   TC_PYTHON_35="python3.5.tcz"
   if [ "$TC_VER" -lt "7" ]; then
     tet python3.5
+    tet -ic python3.5 || exerr "Couldn't load Python 3.5"
+  else
+    tce-load -wic python3.5 || exerr "Couldn't load Python 3.5"
   fi
-  tce-load -ic python3.5 || exerr "Couldn't load Python 3.5"
   [ -f /usr/local/bin/python3 ] || sudo ln -s $(which python3.5) /usr/local/bin/python3
   CONFIG="$1"
   [ -r "$1" ] || CONFIG=$(find $REMASTER -name $1 2>/dev/null|head -n1)
