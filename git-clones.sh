@@ -82,7 +82,7 @@ install_remaster() {
   local confdir="$TCHOME/tc-deliver/remaster/configs"
   [ -d "$bindir" ] || mkdir -p "$bindir"
   [ -d "$confdir" ] || mkdir -p "$confdir"
-  ln -s $(find $TCSOURCE/$REMASTER_REPO/ -maxdepth 0 -type f -executable) $bindir
+  ln -s $(find $TCSOURCE/$REMASTER_REPO/ -maxdepth 1 -type f -executable) $bindir
   ln -s $(find $TCSOURCE/$REMASTER_REPO/ -name '*.cfg') $confdir
 }
 

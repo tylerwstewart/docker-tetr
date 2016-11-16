@@ -2,9 +2,11 @@
 HOST_DLVR="$HOME/tc-deliver"
 HOST_SRCS="$HOME/srctc"
 HOST_DIRS="$HOST_DLVR $HOST_SRCS"
+TC_DLVR="/home/tc/tc-deliver"
+TC_RCONF="$TC_DLVR/remaster/configs"
 
 DOCKER_IMAGE="chazzam/tetr:7.2-x86"
-DOCKER_VOL_DLVR="-v $HOST_DLVR:/home/tc/tc-deliver:rw"
+DOCKER_VOL_DLVR="-v $HOST_DLVR:$TC_DLVR:rw"
 DOCKER_VOL_SRCS="-v $HOST_SRCS:/home/tc/src:rw"
 DOCKER_VOLUMES="$DOCKER_VOL_DLVR $DOCKER_VOL_SRCS"
 DOCKER_ENVS="-e TCMIRROR=http://pecan.digium.internal:81/tinycore-testing/"
@@ -35,7 +37,7 @@ EOF
 
 To troubleshoot this failed remaster of $1:
   docker run -it --entrypoint sh $DOCKER_ARGS --login
-    tc-diskless-remaster -n $@
+    tc-diskless-remaster -n $REMASTER
 
 EOF
   exit 1
@@ -75,7 +77,12 @@ test_extensions() {
 }
 
 remaster() {
+  unset pkg
   mkdir_volume_directories;
-  REMASTER=1
-  docker run $DOCKER_ARGS $@ || exerr "Error bundling remastered image for $1";
+  REMASTER="$1"
+  shift
+  docker run $DOCKER_ARGS \
+    "$TC_RCONF/${REMASTER##$TC_RCONF/}" \
+    $@ \
+    || exerr "Error bundling remastered image for $REMASTER";
 }
