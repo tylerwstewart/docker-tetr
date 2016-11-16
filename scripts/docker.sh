@@ -24,7 +24,7 @@ DOCKER_ARGS="$DOCKER_VOLUMES $DOCKER_ENVS $DOCKER_IMAGE"
 #~ from collections import Counter, OrderedDict
 
 exerr() {
-  printf $@
+  printf "\n%s\n" $@
   [ ! -z "$pkg" ] && cat<<EOF
 
 To troubleshoot this failed tet build of $pkg:
@@ -35,7 +35,7 @@ To troubleshoot this failed tet build of $pkg:
 EOF
   [ ! -z "$REMASTER" ] && cat<<EOF
 
-To troubleshoot this failed remaster of $1:
+To troubleshoot this failed remaster of $REMASTER:
   docker run -it --entrypoint sh $DOCKER_ARGS --login
     tc-diskless-remaster -n $REMASTER
 
@@ -81,8 +81,6 @@ remaster() {
   mkdir_volume_directories;
   REMASTER="$1"
   shift
-  docker run $DOCKER_ARGS \
-    "$TC_RCONF/${REMASTER##$TC_RCONF/}" \
-    $@ \
+  docker run $DOCKER_ARGS "$REMASTER" $@ \
     || exerr "Error bundling remastered image for $REMASTER";
 }

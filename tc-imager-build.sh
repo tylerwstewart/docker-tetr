@@ -65,7 +65,7 @@ tet() {
 
   # Copy packages to src volume
   sudo cp -fLap ${TETSTORE}/*/pkg/*/*.tcz* ${PACKAGES_DIR}/|| exerr "Couldn't copy package deliverables"
-  sudo cp -fLap ${TETSTORE}/*/pkg/*.bfe ${SUBMITS_DIR}/
+  sudo cp -fLap ${TETSTORE}/*/pkg/*.bfe ${SUBMITS_DIR}/||true
 }
 
 tetiff() {
@@ -97,11 +97,17 @@ tc_remaster() {
   fi
   tce-load -ic python3.5 || exerr "Couldn't load Python 3.5"
   [ -f /usr/local/bin/python3 ] || sudo ln -s $(which python3.5) /usr/local/bin/python3
-  CONFIG=$(find $REMASTER -name $1|head -n1)
+  CONFIG="$1"
+  [ -r "$1" ] || CONFIG=$(find $REMASTER -name $1 2>/dev/null|head -n1)
+  [ -z "$CONFIG" ] && CONFIG=$(find $REMASTER -name $(basename $1) 2>/dev/null|head -n1)
+  [ -z "$CONFIG" ] && CONFIG=$(find $TCSOURCE -name $(basename $1) 2>/dev/null|head -n1)
+  [ -z "$CONFIG" ] && exerr "Couldn't find config: $1"
+  [ ! -r "$CONFIG" ] && exerr "Couldn't read config: $CONFIG"
   shift;
+  [ ! -z "$TCMIRROR" ] && TC_MIRROR_RUN="-m $TCMIRROR"
   sudo ${TCBIN}/tc-diskless-remaster.py $CONFIG \
     -t $TC_VER -a $TC_ARCH -k "$(uname -r)" \
-    -o $REMASTER/ -m $TCMIRROR -e $PACKAGES/ $@ ||\
+    -o $REMASTER/ $TC_MIRROR_RUN -e $PACKAGES/ $@ ||\
     exerr "Couldn't create remastered image(s)"
 }
 
