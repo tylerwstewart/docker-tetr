@@ -1,5 +1,5 @@
 #!/bin/sh
-if [ -z "$@" ] || [ "$@" != "-r" -a "$@" != "-m" ]; then
+if [ -z "$@" ] || [ "$@" != "-r" -a "$@" != "-m" -a "$@" != "-M" ]; then
   /bin/uname $@
   exit $?;
 fi
@@ -15,16 +15,19 @@ KERNEL=$(eval echo \$TC${TC_VER})
 [ -z "$KERNEL" ] && exit 1
 [ "$TC_ARCH" = "64" ] && KERNEL="${KERNEL}64"
 
+TC_ARCH="i686"
 if [ "$TC_ARCH" = "64" ]; then
   TC_ARCH="x86_64"
 else
-  TC_ARCH="i486"
+  TC_ARCH_INTEL="i486"
   INTEL=$(file -b /bin/busybox|cut -d, -f2|egrep -o [0-9]{3}$)
-  [ ! -z "$INTEL" ] && TC_ARCH="i${INTEL}"
+  [ ! -z "$INTEL" ] && TC_ARCH_INTEL="i${INTEL}"
 fi
 
 if [ "$1" = "-r" ]; then
   echo $KERNEL
 elif [ "$1" = "-m" ]; then
   echo $TC_ARCH
+elif [ "$1" = "-M" ]; then
+  echo ${TC_ARCH_INTEL:-$TC_ARCH}
 fi

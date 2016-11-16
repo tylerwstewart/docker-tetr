@@ -96,10 +96,10 @@ tc_remaster() {
     tet python3.5
   fi
   tce-load -ic python3.5 || exerr "Couldn't load Python 3.5"
-  [ -f /usr/local/bin/python3 ] || ln -s $(which python3.5) /usr/local/bin/python3
+  [ -f /usr/local/bin/python3 ] || sudo ln -s $(which python3.5) /usr/local/bin/python3
   CONFIG=$(find $REMASTER -name $1|head -n1)
   shift;
-  sudo ${TCBIN}/tc-diskless-remaster $CONFIG \
+  sudo ${TCBIN}/tc-diskless-remaster.py $CONFIG \
     -t $TC_VER -a $TC_ARCH -k "$(uname -r)" \
     -o $REMASTER/ -m $TCMIRROR -e $PACKAGES/ $@ ||\
     exerr "Couldn't create remastered image(s)"
