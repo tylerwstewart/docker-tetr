@@ -38,18 +38,12 @@ RUN sudo chown -R $TCUSER:staff /home/$TCUSER && \
         advcomp.tcz \
         autoconf.tcz \
         automake.tcz \
-        bash.tcz \
         compiletc.tcz \
-        curl.tcz \
         expat2.tcz \
         gettext.tcz \
         git.tcz \
-        intltool.tcz \
         libtool-dev.tcz \
-        openssh.tcz \
-        perl5.tcz \
         perl_xml_parser.tcz \
-        python.tcz \
         squashfs-tools.tcz \
         tar.tcz \
         wget.tcz \
@@ -57,7 +51,7 @@ RUN sudo chown -R $TCUSER:staff /home/$TCUSER && \
         zsync.tcz \
       && \
     ~/.local/bin/git-clones.sh && \
-    ~/.local/bin/update-tet-database && \
-    ( tce-load -w python3.5 || true; )
+    ~/.local/bin/update-tet-database
+    #~ ( tce-load -w python3.5 || true; )
 
 ENTRYPOINT [".local/bin/tc-imager-build.sh"]
