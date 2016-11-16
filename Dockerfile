@@ -4,7 +4,7 @@ FROM tatsushid/tinycore:7.2-x86_64
 # <local TC mirror> = http://pecan.digium.internal:81/tinycore-testing/
 # docker build --build-arg TCMIRROR=<local TC mirror> -t chazzam/tetr:7.2-x86_64 -t chazzam/tetr:latest-x86_64 .
 # docker run -e TCMIRROR=<local TC mirror> -v $HOME/tc-deliver:/home/tc/tc-deliver:rw chazzam/tetr:7.2-x86_64
-
+ARG TCMIRROR
 # http://bugs.python.org/issue19846
 # > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
 ENV TCUSER="tc" LANG=C.UTF-8 LC_ALL=C LANGUAGE=C.UTF-8 \
