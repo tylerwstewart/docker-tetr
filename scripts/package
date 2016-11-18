@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. ./docker.sh
+
+build_packages $@

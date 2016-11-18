@@ -1,0 +1,7 @@
+#!/bin/sh
+
+. ./docker.sh
+
+for f in $@; do
+  remaster $f
+done
