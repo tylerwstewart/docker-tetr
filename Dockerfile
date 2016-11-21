@@ -45,7 +45,7 @@ RUN sudo chown -R $TCUSER:staff /home/$TCUSER && \
         git.tcz \
         libtool-dev.tcz \
         perl_xml_parser.tcz \
-        squashfs-tools.tcz \
+        squashfs-tools-4.x.tcz \
         tar.tcz \
         wget.tcz \
         xz.tcz \
