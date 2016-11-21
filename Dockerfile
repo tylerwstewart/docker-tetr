@@ -1,4 +1,4 @@
-FROM tatsushid/tinycore:7.2-x86
+FROM chazzam/tinycore:4.7.7-x86
 # Instructions are run with 'tc' user
 
 # <local TC mirror> = http://pecan.digium.internal:81/tinycore-testing/
@@ -39,6 +39,7 @@ RUN sudo chown -R $TCUSER:staff /home/$TCUSER && \
         autoconf.tcz \
         automake.tcz \
         compiletc.tcz \
+        curl.tcz \
         expat2.tcz \
         gettext.tcz \
         git.tcz \
