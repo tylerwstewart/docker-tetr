@@ -43,7 +43,8 @@ update_packages() {
     [ -d $git_pkgs ] || continue
     # symlink the packages into the tc-ext-tools directory
     ln -s $git_pkgs/* $TETPKG/ 2>/dev/null;
-    ln -s $(find $d -maxdepth 1 -type f -executable) $TET/ 2>/dev/null
+    local exes="$(find $d -maxdepth 1 -type f -executable)"
+    [ -z "$exes" ] || ln -s $exes $TET/ 2>/dev/null
   done
 }
 
