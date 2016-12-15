@@ -57,6 +57,10 @@ docker_build() {
   )
 }
 
+echo_shell() {
+  echo docker run -it --entrypoint sh $DOCKER_ARGS $@
+}
+
 docker_shell() {
   mkdir_volume_directories;
   docker run -it --entrypoint sh $DOCKER_ARGS $@
