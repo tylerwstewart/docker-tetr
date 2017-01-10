@@ -68,8 +68,13 @@ docker_shell() {
 
 build_packages() {
   mkdir_volume_directories;
+  local do_update=""
+  if [ "$1" = "-git" ]; then
+    do_update="git"
+    shift
+  fi
   for pkg in $@; do
-    docker run $DOCKER_ARGS tet $pkg || exerr "Error building package $pkg";
+    docker run $DOCKER_ARGS $do_update tet $pkg || exerr "Error building package $pkg";
   done
 }
 
