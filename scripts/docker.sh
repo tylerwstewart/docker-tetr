@@ -5,7 +5,7 @@ HOST_DIRS="$HOST_DLVR $HOST_SRCS"
 TC_DLVR="/home/tc/tc-deliver"
 TC_RCONF="$TC_DLVR/remaster/configs"
 
-DOCKER_IMAGE="chazzam/tetr:4.7.7-x86"
+DOCKER_IMAGE="$(grep FROM ../Dockerfile|cut -d\  -f2|head -n1)"
 DOCKER_VOL_DLVR="-v $HOST_DLVR:$TC_DLVR:rw"
 DOCKER_VOL_SRCS="-v $HOST_SRCS:/home/tc/src:rw"
 DOCKER_VOLUMES="$DOCKER_VOL_DLVR $DOCKER_VOL_SRCS"
