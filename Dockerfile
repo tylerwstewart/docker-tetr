@@ -30,7 +30,7 @@ WORKDIR /home/$TCUSER
 RUN sudo chown -R $TCUSER:staff /home/$TCUSER && \
     . .ashrc .profile && \
     chmod 0600 -R /home/$TCUSER/.ssh/* && \
-    chmod 0700 /home/$TCUSER/.ssh &&\
+    chmod 0700 /home/$TCUSER/.ssh && \
     echo etc/init.d/tet-functions >> /opt/.filetool.lst && \
     mkdir -p /home/$TCUSER/$TCDELIVER/packages /home/$TCUSER/$TCDELIVER/remaster && \
     ( [ ! -z "$TCMIRROR" ] && echo "$TCMIRROR" > /opt/tcemirror||true) && \

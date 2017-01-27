@@ -43,7 +43,8 @@ update_packages() {
     [ -d $git_pkgs ] || continue
     # symlink the packages into the tc-ext-tools directory
     ln -s $git_pkgs/* $TETPKG/ 2>/dev/null;
-    ln -s $(find $d -maxdepth 1 -type f -executable) $TET/ 2>/dev/null
+    local exes="$(find $d -maxdepth 1 -type f -executable)"
+    [ -z "$exes" ] || ln -s $exes $TET/ 2>/dev/null
   done
 }
 
@@ -93,12 +94,9 @@ tettest() {
 tc_remaster() {
   [ -d "${REMASTER}/" ] || mkdir -p "${REMASTER}/" || exerr "Couldn't make remaster directory"
   TC_PYTHON_35="python3.5.tcz"
-  if [ "$TC_VER" -lt "7" ]; then
-    tet python3.5
-    tet -ic python3.5 || exerr "Couldn't load Python 3.5"
-  else
-    tce-load -wic python3.5 || exerr "Couldn't load Python 3.5"
-  fi
+  tce-load -wic $TC_PYTHON_35 || \
+    { tet python3.5; tce-load -ic python3.5; } || \
+    exerr "Couldn't load Python 3.5"
   [ -f /usr/local/bin/python3 ] || sudo ln -s $(which python3.5) /usr/local/bin/python3
   CONFIG="$1"
   [ -r "$1" ] || CONFIG=$(find $REMASTER -name $1 2>/dev/null|head -n1)
@@ -110,7 +108,8 @@ tc_remaster() {
   [ ! -z "$TCMIRROR" ] && TC_MIRROR_RUN="-m $TCMIRROR"
   sudo ${TCBIN}/tc-diskless-remaster.py $CONFIG \
     -t $TC_VER -a $TC_ARCH -k "$(uname -r)" \
-    -o $REMASTER/ $TC_MIRROR_RUN -e $PACKAGES/ $@ ||\
+    -o $REMASTER/ $TC_MIRROR_RUN \
+    -e $PACKAGES/${TC_VER}.x/$TC_ARCH/tcz/ $@ ||\
     exerr "Couldn't create remastered image(s)"
 }
 
