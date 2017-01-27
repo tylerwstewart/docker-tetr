@@ -5,7 +5,7 @@ HOST_DIRS="$HOST_DLVR $HOST_SRCS"
 TC_DLVR="/home/tc/tc-deliver"
 TC_RCONF="$TC_DLVR/remaster/configs"
 
-DOCKER_IMAGE="chazzam/tetr:7.2-x86"
+DOCKER_IMAGE="$(grep FROM ../Dockerfile|cut -d\  -f2|head -n1)"
 DOCKER_VOL_DLVR="-v $HOST_DLVR:$TC_DLVR:rw"
 DOCKER_VOL_SRCS="-v $HOST_SRCS:/home/tc/src:rw"
 DOCKER_VOLUMES="$DOCKER_VOL_DLVR $DOCKER_VOL_SRCS"
@@ -68,8 +68,13 @@ docker_shell() {
 
 build_packages() {
   mkdir_volume_directories;
+  local do_update=""
+  if [ "$1" = "-git" ]; then
+    do_update="git"
+    shift
+  fi
   for pkg in $@; do
-    docker run $DOCKER_ARGS tet $pkg || exerr "Error building package $pkg";
+    docker run $DOCKER_ARGS $do_update tet $pkg || exerr "Error building package $pkg";
   done
 }
 
