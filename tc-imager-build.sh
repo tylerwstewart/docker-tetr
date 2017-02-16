@@ -16,7 +16,9 @@ PACKAGES="$DELIVER/packages"
 SUBMITS="$DELIVER/submits"
 
 exerr() {
-  printf $@
+  echo;echo;
+  echo "$@"
+  echo;echo;
   exit 1
 }
 
@@ -49,6 +51,7 @@ update_packages() {
 }
 
 tet() {
+  # TODO: add support for specifying a version on the fly
   # build the requested package(s)
   cd ${TETPKG}/ || exerr "No TET packages available"
   ${TCBIN}/update-tet-database || exerr "No TET database"
@@ -91,7 +94,20 @@ tettest() {
   exit $?
 }
 
+search_config() {
+  local dir="$1"
+  local term="$2"
+  local results=""
+  results=$(
+    find "$dir" -type f -name "${term}*" \
+    -exec grep -Iq . \{\} \; -and -print 2>/dev/null|\
+    head -n1
+  )
+  echo "$results"
+}
+
 tc_remaster() {
+  # TODO: add support for specifying a version string to add to the name of the output
   [ -d "${REMASTER}/" ] || mkdir -p "${REMASTER}/" || exerr "Couldn't make remaster directory"
   TC_PYTHON_35="python3.5.tcz"
   tce-load -wic $TC_PYTHON_35 || \
@@ -99,9 +115,9 @@ tc_remaster() {
     exerr "Couldn't load Python 3.5"
   [ -f /usr/local/bin/python3 ] || sudo ln -s $(which python3.5) /usr/local/bin/python3
   CONFIG="$1"
-  [ -r "$1" ] || CONFIG=$(find $REMASTER -name $1 2>/dev/null|head -n1)
-  [ -z "$CONFIG" ] && CONFIG=$(find $REMASTER -name $(basename $1) 2>/dev/null|head -n1)
-  [ -z "$CONFIG" ] && CONFIG=$(find $TCSOURCE -name $(basename $1) 2>/dev/null|head -n1)
+  [ -r "$1" ] || CONFIG=$(search_config "$REMASTER" "$1")
+  [ -z "$CONFIG" ] && CONFIG=$(search_config "$REMASTER" "$(basename $1)")
+  [ -z "$CONFIG" ] && CONFIG=$(search_config "$TCSOURCE" "$(basename $1)")
   [ -z "$CONFIG" ] && exerr "Couldn't find config: $1"
   [ ! -r "$CONFIG" ] && exerr "Couldn't read config: $CONFIG"
   shift;
@@ -109,8 +125,8 @@ tc_remaster() {
   sudo ${TCBIN}/tc-diskless-remaster.py $CONFIG \
     -t $TC_VER -a $TC_ARCH -k "$(uname -r)" \
     -o $REMASTER/ $TC_MIRROR_RUN \
-    -e $PACKAGES/${TC_VER}.x/$TC_ARCH/tcz/ $@ ||\
-    exerr "Couldn't create remastered image(s)"
+    -E $PACKAGES/${TC_VER}.x/$TC_ARCH/tcz/ $@ ||\
+    exerr "Failed to create remastered image(s)"
 }
 
 TC_VER=$(. /etc/init.d/tc-functions; getMajorVer)
