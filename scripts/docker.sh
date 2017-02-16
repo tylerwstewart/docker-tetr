@@ -5,7 +5,7 @@ HOST_DIRS="$HOST_DLVR $HOST_SRCS"
 TC_DLVR="/home/tc/tc-deliver"
 TC_RCONF="$TC_DLVR/remaster/configs"
 
-DOCKER_IMAGE="$(grep FROM ../Dockerfile|cut -d\  -f2|head -n1)"
+DOCKER_IMAGE="chazzam/tetr:$(grep FROM ../Dockerfile|cut -d: -f2|head -n1)"
 DOCKER_VOL_DLVR="-v $HOST_DLVR:$TC_DLVR:rw"
 DOCKER_VOL_SRCS="-v $HOST_SRCS:/home/tc/src:rw"
 DOCKER_VOLUMES="$DOCKER_VOL_DLVR $DOCKER_VOL_SRCS"
@@ -24,7 +24,9 @@ DOCKER_ARGS="$DOCKER_VOLUMES $DOCKER_ENVS $DOCKER_IMAGE"
 #~ from collections import Counter, OrderedDict
 
 exerr() {
-  printf "\n%s\n" $@
+  echo;echo;
+  echo "$@"
+  echo;echo;
   [ ! -z "$pkg" ] && cat<<EOF
 
 To troubleshoot this failed tet build of $pkg:
@@ -69,6 +71,7 @@ docker_shell() {
 build_packages() {
   mkdir_volume_directories;
   local do_update=""
+  # TODO: add support for -v <version>
   if [ "$1" = "-git" ]; then
     do_update="git"
     shift
