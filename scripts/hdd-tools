@@ -3,7 +3,7 @@
 . ./docker.sh
 
 UPDATES="hdd-tests"
-HDD="smartmontools lcdproc"
+HDD="smartmontools lcdproc storcli arcconf"
 TC_4="openssl"
 TC_7=""
 
