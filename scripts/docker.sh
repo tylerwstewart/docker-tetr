@@ -30,7 +30,7 @@ exerr() {
   [ ! -z "$pkg" ] && cat<<EOF
 
 To troubleshoot this failed tet build of $pkg:
-  docker run -it --entrypoint sh $DOCKER_ARGS --login
+  docker run --rm -it --entrypoint sh $DOCKER_ARGS --login
     cd ~/tc-ext-tools/packages/$pkg
     buildit
 
@@ -38,7 +38,7 @@ EOF
   [ ! -z "$REMASTER" ] && cat<<EOF
 
 To troubleshoot this failed remaster of $REMASTER:
-  docker run -it --entrypoint sh $DOCKER_ARGS --login
+  docker run --rm -it --entrypoint sh $DOCKER_ARGS --login
     tc-diskless-remaster -n $REMASTER
 
 EOF
@@ -60,12 +60,12 @@ docker_build() {
 }
 
 echo_shell() {
-  echo docker run -it --entrypoint sh $DOCKER_ARGS $@
+  echo docker run --rm -it --entrypoint sh $DOCKER_ARGS $@
 }
 
 docker_shell() {
   mkdir_volume_directories;
-  docker run -it --entrypoint sh $DOCKER_ARGS $@
+  docker run --rm -it --entrypoint sh $DOCKER_ARGS $@
 }
 
 build_packages() {
@@ -77,14 +77,14 @@ build_packages() {
     shift
   fi
   for pkg in $@; do
-    docker run $DOCKER_ARGS $do_update tet $pkg || exerr "Error building package $pkg";
+    docker run --rm $DOCKER_ARGS $do_update tet $pkg || exerr "Error building package $pkg";
   done
 }
 
 test_extensions() {
   mkdir_volume_directories;
   for pkg in $@; do
-    docker run $DOCKER_ARGS tettest $pkg || exerr "Error testing package $pkg";
+    docker run --rm $DOCKER_ARGS tettest $pkg || exerr "Error testing package $pkg";
   done
 }
 
@@ -93,6 +93,6 @@ remaster() {
   mkdir_volume_directories;
   REMASTER="$1"
   shift
-  docker run $DOCKER_ARGS "$REMASTER" $@ \
+  docker run --rm $DOCKER_ARGS "$REMASTER" $@ \
     || exerr "Error bundling remastered image for $REMASTER";
 }
