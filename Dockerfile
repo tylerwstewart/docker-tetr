@@ -23,6 +23,7 @@ RUN true && \
     mkdir -p /home/$TCUSER/$TCDELIVER/packages /home/$TCUSER/$TCDELIVER/remaster && \
     ( [ ! -z "$TCMIRROR" ] && echo "$TCMIRROR" > /opt/tcemirror||true) && \
     tce-load -wic \
+        curl.tcz \
         expat2.tcz \
         git.tcz \
       && \
