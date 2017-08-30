@@ -1,4 +1,4 @@
-FROM tatsushid/tinycore:7.2-x86
+FROM tatsushid/tinycore:8.0-x86
 # Instructions are run with 'tc' user
 
 # <local TC mirror> = http://pecan.digium.internal:81/tinycore-testing/
@@ -20,14 +20,27 @@ WORKDIR /home/$TCUSER
 
 RUN true && \
     . .ashrc .profile && \
-    mkdir -p /home/$TCUSER/$TCDELIVER/packages /home/$TCUSER/$TCDELIVER/remaster && \
+    mkdir -p \
+        /home/$TCUSER/$TCDELIVER/packages \
+        /home/$TCUSER/$TCDELIVER/remaster \
+      && \
+    sudo mkdir -p \
+        /etc/ssl/ \
+      && \
     ( [ ! -z "$TCMIRROR" ] && echo "$TCMIRROR" > /opt/tcemirror||true) && \
     tce-load -wic \
+        ca-certificates.tcz \
         expat2.tcz \
         git.tcz \
       && \
+    sudo update-ca-certificates -d && \
+    sudo ln -s /usr/local/etc/ssl/certs /etc/ssl/certs && \
     git clone ${TETR_SCRIPTS_REPO} tetr-scripts && \
     ( cd tetr-scripts/include && \
-    ./install.sh )
+    ./install.sh ) && \
+    sudo chown tc:staff \
+        /opt/.filetool.lst \
+        /opt/.xfiletool.lst \
+        /opt/tcemirror
 
 ENTRYPOINT [".local/bin/tc-imager-build.sh"]
