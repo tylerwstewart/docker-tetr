@@ -1,4 +1,4 @@
-FROM tatsushid/tinycore:8.0-x86
+FROM tatsushid/tinycore:8.0-x86_64
 # Instructions are run with 'tc' user
 
 # <local TC mirror> = http://pecan.digium.internal:81/tinycore-testing/
@@ -20,6 +20,7 @@ WORKDIR /home/$TCUSER
 
 RUN true && \
     . .ashrc .profile && \
+    sudo chown tc:staff -R /home/tc /opt && \
     mkdir -p \
         /home/$TCUSER/$TCDELIVER/packages \
         /home/$TCUSER/$TCDELIVER/remaster \
