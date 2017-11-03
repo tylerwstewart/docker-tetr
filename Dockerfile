@@ -27,7 +27,7 @@ RUN true && \
     sudo mkdir -p \
         /etc/ssl/ \
       && \
-    ( [ ! -z "$TCMIRROR" ] && echo "$TCMIRROR" > /opt/tcemirror||true) && \
+    ( [ ! -z "$TCMIRROR" ] && echo "$TCMIRROR" | sudo tee /opt/tcemirror||true) && \
     tce-load -wic \
         ca-certificates.tcz \
         expat2.tcz \
