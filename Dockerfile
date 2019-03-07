@@ -5,7 +5,8 @@ FROM tatsushid/tinycore:8.0-x86
 # docker build --build-arg TCMIRROR=<local TC mirror> -t chazzam/tetr:7.2-x86 -t chazzam/tetr:latest .
 # docker run -e TCMIRROR=<local TC mirror> -v $HOME/tc-deliver:/home/tc/tc-deliver:rw chazzam/tetr:7.2-x86
 ARG TCMIRROR
-ARG TETR_SCRIPTS_REPO=https://github.com/chazzam/tetr-scripts.git
+#ARG TETR_SCRIPTS_REPO=https://github.com/chazzam/tetr-scripts.git
+ARG TETR_SCRIPTS_REPO=https://github.com/tylerwstewart/tetr-scripts.git
 
 # http://bugs.python.org/issue19846
 # > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
