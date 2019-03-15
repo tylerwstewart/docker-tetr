@@ -1,4 +1,4 @@
-FROM tatsushid/tinycore:8.0-x86
+FROM tatsushid/tinycore:10.0-x86
 # Instructions are run with 'tc' user
 
 # <local TC mirror> = http://pecan.digium.internal:81/tinycore-testing/
@@ -20,7 +20,7 @@ ENV TCUSER="tc" LANG=C.UTF-8 LC_ALL=C LANGUAGE=C.UTF-8 \
 WORKDIR /home/$TCUSER
 
 RUN true && \
-    . .ashrc .profile && \
+    . /home/$TCUSER/.ashrc /home/$TCUSER/.profile && \
     mkdir -p \
         /home/$TCUSER/$TCDELIVER/packages \
         /home/$TCUSER/$TCDELIVER/remaster \
