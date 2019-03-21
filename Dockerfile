@@ -1,4 +1,9 @@
-FROM tatsushid/tinycore:10.0-x86
+#e.g. --build-arg DOCKER_FROM=tatsushid/tinycore:latest
+#  or --build-arg DOCKER_FROM=tatsushid/tinycore:10.0-x86
+#  or --build-arg DOCKER_FROM=tatsushid/tinycore:10.0-x86_64
+ARG DOCKER_FROM
+FROM ${DOCKER_FROM}
+
 # Instructions are run with 'tc' user
 
 # <local TC mirror> = http://pecan.digium.internal:81/tinycore-testing/
@@ -39,6 +44,7 @@ RUN true && \
     git clone ${TETR_SCRIPTS_REPO} tetr-scripts && \
     ( cd tetr-scripts/include && \
     ./install.sh ) && \
+    rm -rf /tmp/tce/optional/*.tcz* && \
     sudo chown tc:staff \
         /opt/.filetool.lst \
         /opt/.xfiletool.lst \
