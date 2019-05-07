@@ -48,6 +48,7 @@ RUN true && \
     sudo chown tc:staff \
         /opt/.filetool.lst \
         /opt/.xfiletool.lst \
-        /opt/tcemirror
+        /opt/tcemirror \
+    && echo 'export PATH="/usr/local/include/openssl:${PATH}"' >> /home/tc/.ashrc
 
 ENTRYPOINT [".local/bin/tc-imager-build.sh"]
